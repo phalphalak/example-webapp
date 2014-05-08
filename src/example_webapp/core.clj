@@ -1,5 +1,6 @@
 (ns example-webapp.core
-  (:require [ring.adapter.jetty :as jetty]
+  (:require [clojure.tools.nrepl.server :as nrepl]
+            [ring.adapter.jetty :as jetty]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [compojure.handler :as handler]
             [compojure.core :refer :all]
@@ -25,5 +26,9 @@
       (wrap-stacktrace)))
 
 (defn -main [& args]
-  (info "start jetty")
-  (jetty/run-jetty #'app {:port 3000 :join? false}))
+  (let [nrepl-port 4000
+        jetty-port 3000]
+    (info (format "start nrepl at port %s" nrepl-port))
+    (nrepl/start-server :port nrepl-port)
+    (info (format "start jetty at port %s" jetty-port))
+    (jetty/run-jetty #'app {:port jetty-port :join? false})))
